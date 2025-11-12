@@ -1,19 +1,41 @@
 class TokenCalculator {
+    // Assign a unique color for each token symbol
+    getTokenColor(token) {
+        // You can expand this palette for more tokens
+        const palette = [
+            '#0070f3', // blue
+            '#e67e22', // orange
+            '#16a085', // teal
+            '#e84393', // pink
+            '#8e44ad', // purple
+            '#2d98da', // light blue
+            '#27ae60', // green
+            '#c0392b', // red
+            '#f1c40f', // yellow
+            '#636e72'  // gray
+        ];
+        // Hash token to a color index
+        let hash = 0;
+        for (let i = 0; i < token.length; i++) hash += token.charCodeAt(i);
+        return palette[hash % palette.length];
+    }
     constructor() {
         this.prices = {};
         this.trades = [];
         this.initEventListeners();
         this.loadDefaultData();
     }
+    // Constructor to initialize prices and trades
 
     initEventListeners() {
         document.getElementById('calculate-btn').addEventListener('click', () => {
             this.calculatePL();
         });
     }
+    // Set up event listeners for UI actions
 
     loadDefaultData() {
-        // Load default data from data.txt format
+        // Load default trade data (sample)
         const defaultData = `[NEAR=2.57 STRK=0.142 ARB=0.2760 ZK=0.05150 APT=3.128]
 STRK-1000 ARB-442.9
 NEAR-50 ARB-440
@@ -27,7 +49,7 @@ APT-50 NEAR-60`;
     }
 
     parsePrices(priceString) {
-        // Parse price line: [NEAR=2.57 STRK=0.142 ARB=0.2760 ZK=0.05150 APT=3.128]
+        // Parse the price line: [NEAR=2.57 STRK=0.142 ...]
         const priceMatch = priceString.match(/\[(.*?)\]/);
         if (!priceMatch) return false;
 
@@ -59,9 +81,10 @@ APT-50 NEAR-60`;
             }
         }
     }
+    // Parse all trade lines (skip the first line with prices)
 
     parseTradeLine(line) {
-        // Parse trade line: APT-50 NEAR-60
+        // Parse a single trade line, e.g. APT-50 NEAR-60
         const parts = line.split(' ').filter(part => part.trim() !== '');
         if (parts.length !== 2) return null;
 
@@ -83,19 +106,19 @@ APT-50 NEAR-60`;
     calculatePL() {
         const inputData = document.getElementById('trade-data').value.trim();
         if (!inputData) {
-            this.displayError('Vui lòng nhập dữ liệu giao dịch');
+            this.displayError('Please enter your trade data');
             return;
         }
 
         const lines = inputData.split('\n');
         if (lines.length < 2) {
-            this.displayError('Dữ liệu không đúng định dạng');
+            this.displayError('Invalid data format');
             return;
         }
 
         // Parse prices from first line
         if (!this.parsePrices(lines[0])) {
-            this.displayError('Không thể đọc giá token từ dòng đầu tiên');
+            this.displayError('Cannot read token prices from the first line');
             return;
         }
 
@@ -123,12 +146,13 @@ APT-50 NEAR-60`;
             pricesDiv.appendChild(priceCard);
         });
     }
+    // Render the current token prices
 
     displayResults() {
         const resultsDiv = document.getElementById('results');
 
         if (this.trades.length === 0) {
-            resultsDiv.innerHTML = '<p>Không tìm thấy giao dịch nào để tính toán</p>';
+            resultsDiv.innerHTML = '<p>No trades found to calculate.</p>';
             return;
         }
 
@@ -149,10 +173,10 @@ APT-50 NEAR-60`;
             resultsHTML += `
                 <div class="table-row ${status}">
                     <div class="sell-info">
-                        <div>${trade.sellToken}@${trade.sellAmount}</div>
+                        <div><span class="token-label" style="color:${this.getTokenColor(trade.sellToken)}">${trade.sellToken}</span>@${trade.sellAmount}</div>
                     </div>
                     <div class="buy-info">
-                        <div>${trade.buyToken}@${trade.buyAmount}</div>
+                        <div><span class="token-label" style="color:${this.getTokenColor(trade.buyToken)}">${trade.buyToken}</span>@${trade.buyAmount}</div>
                     </div>
                     <div class="pl-amount ${status}">
                         ${pl >= 0 ? '+' : ''}${pl.toFixed(4)}
@@ -167,12 +191,15 @@ APT-50 NEAR-60`;
         const totalColor = totalPL >= 0 ? 'total-profit' : 'total-loss';
         resultsHTML += `
             <div class="total-summary no-bg">
-                <h3 class="${totalColor}">${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(4)}</h3>
+                <span class="${totalColor}" style="display:inline-block;width:100%;text-align:center;font-size:1.5em;font-weight:bold;">
+                  ${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(4)}
+                </span>
             </div>
         `;
 
         resultsDiv.innerHTML = resultsHTML;
     }
+    // Render the P/L results table
 
     calculateTradePL(trade) {
         const buyValue = trade.buyAmount * (this.prices[trade.buyToken] || 0);
@@ -181,14 +208,16 @@ APT-50 NEAR-60`;
         // P/L = Value of tokens bought - Value of tokens sold
         return buyValue - sellValue;
     }
+    // Calculate P/L for a single trade
 
     displayError(message) {
         const resultsDiv = document.getElementById('results');
         resultsDiv.innerHTML = `<div class="error">${message}</div>`;
 
         const pricesDiv = document.getElementById('current-prices');
-        pricesDiv.innerHTML = '<p>Không có dữ liệu giá</p>';
+        pricesDiv.innerHTML = '<p>No price data available</p>';
     }
+    // Show error message in the UI
 }
 
 // Initialize the calculator when the page loads
