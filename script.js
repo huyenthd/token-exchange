@@ -179,7 +179,7 @@ APT-50 NEAR-60`;
                         <div><span class="token-label" style="color:${this.getTokenColor(trade.buyToken)}">${trade.buyToken}</span>@${trade.buyAmount}</div>
                     </div>
                     <div class="pl-amount ${status}">
-                        ${pl >= 0 ? '+' : ''}${pl.toFixed(4)}
+                        ${pl >= 0 ? '+' : ''}${pl.toFixed(2)}
                     </div>
                 </div>
             `;
@@ -188,14 +188,14 @@ APT-50 NEAR-60`;
         resultsHTML += '</div>';
 
         // Add total summary
-        const totalColor = totalPL >= 0 ? 'total-profit' : 'total-loss';
-        resultsHTML += `
-            <div class="total-summary no-bg">
-                <span class="${totalColor}" style="display:inline-block;width:100%;text-align:center;font-size:1.5em;font-weight:bold;">
-                  ${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(4)}
-                </span>
-            </div>
-        `;
+                const totalColor = totalPL >= 0 ? 'total-profit' : 'total-loss';
+                resultsHTML += `
+                        <div class="total-summary no-bg">
+                                <span class="${totalColor}" style="display:inline-block;width:100%;text-align:center;font-size:1.5em;font-weight:bold;">
+                                    ${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(2)}
+                                </span>
+                        </div>
+                `;
 
         resultsDiv.innerHTML = resultsHTML;
     }
