@@ -31,6 +31,15 @@ class TokenCalculator {
         document.getElementById('calculate-btn').addEventListener('click', () => {
             this.calculatePL();
         });
+        const clearBtn = document.getElementById('clear-btn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                document.getElementById('trade-data').value = '';
+                document.getElementById('results').innerHTML = '<p>Paste your data and click "Calculate P/L" to see results</p>';
+                document.getElementById('current-prices').innerHTML = '';
+                document.getElementById('total-pl-top').innerHTML = '';
+            });
+        }
     }
     // Set up event listeners for UI actions
 
@@ -150,9 +159,11 @@ APT-50 NEAR-60`;
 
     displayResults() {
         const resultsDiv = document.getElementById('results');
+        const totalPLTopDiv = document.getElementById('total-pl-top');
 
         if (this.trades.length === 0) {
             resultsDiv.innerHTML = '<p>No trades found to calculate.</p>';
+            if (totalPLTopDiv) totalPLTopDiv.innerHTML = '';
             return;
         }
 
@@ -187,15 +198,21 @@ APT-50 NEAR-60`;
 
         resultsHTML += '</div>';
 
-        // Add total summary
-                const totalColor = totalPL >= 0 ? 'total-profit' : 'total-loss';
-                resultsHTML += `
-                        <div class="total-summary no-bg">
-                                <span class="${totalColor}" style="display:inline-block;width:100%;text-align:center;font-size:1.5em;font-weight:bold;">
-                                    ${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(2)}
-                                </span>
-                        </div>
-                `;
+        // Show total P/L at the top
+        if (totalPLTopDiv) {
+            const totalColor = totalPL >= 0 ? 'total-profit' : 'total-loss';
+            totalPLTopDiv.innerHTML = `<span class="${totalColor}" style="font-size:1.1em;font-weight:bold;">Total P/L: ${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(2)}</span>`;
+        }
+
+        // Add total summary at the bottom (optional)
+        const totalColor = totalPL >= 0 ? 'total-profit' : 'total-loss';
+        resultsHTML += `
+            <div class="total-summary no-bg">
+                <span class="${totalColor}" style="display:inline-block;width:100%;text-align:center;font-size:1.5em;font-weight:bold;">
+                    ${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(2)}
+                </span>
+            </div>
+        `;
 
         resultsDiv.innerHTML = resultsHTML;
     }
