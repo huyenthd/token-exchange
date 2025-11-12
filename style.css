@@ -9,11 +9,13 @@
     margin-bottom: 4px;
     transition: background 0.2s;
 }
+
 #clear-btn.small-btn:hover {
     background: #f8d7da;
     color: #dc3545;
     border-color: #dc3545;
 }
+
 * {
     margin: 0;
     padding: 0;

@@ -1,7 +1,13 @@
 class TokenCalculator {
-    // Assign a unique color for each token symbol
+    // Assign a unique color for each token symbol, no duplicates
     getTokenColor(token) {
-        // You can expand this palette for more tokens
+        if (!this.tokenColorMap) {
+            this.tokenColorMap = {};
+            this.tokenColorUsed = new Set();
+        }
+        if (this.tokenColorMap[token]) {
+            return this.tokenColorMap[token];
+        }
         const palette = [
             '#0070f3', // blue
             '#e67e22', // orange
@@ -14,10 +20,19 @@ class TokenCalculator {
             '#f1c40f', // yellow
             '#636e72'  // gray
         ];
-        // Hash token to a color index
-        let hash = 0;
-        for (let i = 0; i < token.length; i++) hash += token.charCodeAt(i);
-        return palette[hash % palette.length];
+        // Find first unused color
+        for (let i = 0; i < palette.length; i++) {
+            if (!Array.from(this.tokenColorUsed).includes(palette[i])) {
+                this.tokenColorMap[token] = palette[i];
+                this.tokenColorUsed.add(palette[i]);
+                return palette[i];
+            }
+        }
+        // If palette runs out, assign a random color
+        const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+        this.tokenColorMap[token] = randomColor;
+        this.tokenColorUsed.add(randomColor);
+        return randomColor;
     }
     constructor() {
         this.prices = {};
@@ -35,9 +50,6 @@ class TokenCalculator {
         if (clearBtn) {
             clearBtn.addEventListener('click', () => {
                 document.getElementById('trade-data').value = '';
-                document.getElementById('results').innerHTML = '<p>Paste your data and click "Calculate P/L" to see results</p>';
-                document.getElementById('current-prices').innerHTML = '';
-                document.getElementById('total-pl-top').innerHTML = '';
             });
         }
     }
@@ -201,18 +213,8 @@ APT-50 NEAR-60`;
         // Show total P/L at the top
         if (totalPLTopDiv) {
             const totalColor = totalPL >= 0 ? 'total-profit' : 'total-loss';
-            totalPLTopDiv.innerHTML = `<span class="${totalColor}" style="font-size:1.1em;font-weight:bold;">Total P/L: ${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(2)}</span>`;
+            totalPLTopDiv.innerHTML = `<span class="${totalColor}" style="font-size:1.1em;font-weight:bold;">${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(2)}</span>`;
         }
-
-        // Add total summary at the bottom (optional)
-        const totalColor = totalPL >= 0 ? 'total-profit' : 'total-loss';
-        resultsHTML += `
-            <div class="total-summary no-bg">
-                <span class="${totalColor}" style="display:inline-block;width:100%;text-align:center;font-size:1.5em;font-weight:bold;">
-                    ${totalPL >= 0 ? '+' : ''}${totalPL.toFixed(2)}
-                </span>
-            </div>
-        `;
 
         resultsDiv.innerHTML = resultsHTML;
     }
