@@ -12,6 +12,20 @@ body {
     color: #333;
 }
 
+.version-label {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #667eea;
+    background: #fff;
+    padding: 2px 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+    z-index: 100;
+}
+
 .container {
     max-width: 480px;
     width: 100%;
