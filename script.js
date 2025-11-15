@@ -52,6 +52,17 @@ class TokenCalculator {
                 document.getElementById('trade-data').value = '';
             });
         }
+        const pasteBtn = document.getElementById('paste-btn');
+        if (pasteBtn) {
+            pasteBtn.addEventListener('click', async () => {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    document.getElementById('trade-data').value = text;
+                } catch (err) {
+                    alert('Could not read clipboard. Please allow clipboard permissions.');
+                }
+            });
+        }
     }
     // Set up event listeners for UI actions
 
@@ -179,6 +190,18 @@ APT-50 NEAR-60`;
             return;
         }
 
+
+        // Calculate P/L for each trade and store with trade
+        let tradePLs = this.trades.map(trade => {
+            return {
+                trade,
+                pl: this.calculateTradePL(trade)
+            };
+        });
+
+        // Sort by P/L ascending (loss to profit)
+        tradePLs.sort((a, b) => a.pl - b.pl);
+
         let totalPL = 0;
         let resultsHTML = '<div class="trades-table">';
         resultsHTML += `
@@ -189,8 +212,7 @@ APT-50 NEAR-60`;
             </div>
         `;
 
-        this.trades.forEach((trade) => {
-            const pl = this.calculateTradePL(trade);
+        tradePLs.forEach(({ trade, pl }) => {
             totalPL += pl;
             const status = pl >= 0 ? 'profit' : 'loss';
             resultsHTML += `

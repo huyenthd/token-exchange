@@ -1,3 +1,23 @@
+#clear-btn.small-btn,
+#paste-btn.small-btn {
+    background: #eee;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    transition: background 0.2s;
+}
+
+#clear-btn.small-btn:hover,
+#paste-btn.small-btn:hover {
+    background: #f8d7da;
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
 #clear-btn.small-btn {
     background: #eee;
     color: #333;
